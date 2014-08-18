@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=shift_jis" />
+<title>Radial</title>
+<style>
+	#canvas{
+		border:1px solid;
+	}
+</style>
+
+<script type="text/javascript">
+	var canvas, context, interval;
+	var bullet = new Array();
+	
+	var angle = 0;
+	var step = 35;
+	
+	function init(){
+		canvas = document.getElementById("canvas");
+		context = canvas.getContext("2d");
+		
+		bullet[bullet.length] = new Bullet(canvas.width/2, canvas.height/2, 0,0);
+		bullet[bullet.length] = new Bullet(canvas.width/2, canvas.height/2, 180,1);
+		bullet[bullet.length] = new Bullet(canvas.width/2, canvas.height/2, 90,2);
+		bullet[bullet.length] = new Bullet(canvas.width/2, canvas.height/2, 270,3);
+	
+	
+		interval = setInterval(run, 40);
+	}
+	
+	function run(){
+		context.clearRect(0,0, canvas.width, canvas.height);
+		drawBullets();
+	}
+	
+	function drawBullets(){
+		collide();
+	
+		for(i = 0; i < bullet.length; i++)
+			bullet[i].draw(context);
+	}
+	
+	function collide(){
+	var detect = true;
+	
+	
+		for(i = 0; i < bullet.length-1; i++)
+			for(k = i; k < bullet.length; k++){
+				var xDect = Math.pow(bullet[i].x - bullet[k].x,2);
+				var yDect = Math.pow(bullet[i].y - bullet[k].y,2);		
+				var rDect = 10;
+					if(xDect + yDect > rDect)
+						detect = false;
+			}
+			
+		if(detect){
+			alert(bullet[0].color);
+			bullet[0].color++;
+			bullet[1].color++;
+			bullet[2].color++;
+			bullet[3].color++;
+		}	
+	
+	}
+	
+	
+	function Bullet(x, y, angle,color){
+		this.x = x;
+		this.y = y;
+		this.color = color;
+		this.angle = Math.PI*angle/180;
+		
+		this.draw = function(ctx){
+			this.x += 10*Math.cos(this.angle);
+			this.y -= 10*Math.sin(this.angle);
+			
+			this.angle += Math.PI/18;
+			
+			if(this.color == 4)
+				this.color = 0;
+			
+			if(this.color == 0)
+				ctx.fillStyle = "blue";
+			if(this.color == 1)
+				ctx.fillStyle = "red";
+			if(this.color == 2)
+				ctx.fillStyle = "yellow";
+			if(this.color == 3)
+				ctx.fillStyle = "green";
+			
+			ctx.beginPath();
+			ctx.arc(this.x, this.y, 10, 0, Math.PI*2, true);
+			ctx.closePath();
+			ctx.fill();
+		}
+	}
+	
+	
+window.onload = init;
+</script>
+
+</head>
+
+<body>
+<canvas id = "canvas" height = 480 width = 854></canvas>
+</body>
+</html>

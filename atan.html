@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Tangent</title>
+<style>
+	#canvas{
+		border:1px solid;
+	}
+</style>
+
+<script type="text/javascript">
+	var canvas, context, interval;
+	var player = new Player();
+	var enemy = new Enemy();
+	var bullet = new Array();
+	
+	function Player(){
+		this.x = 600;
+		this.y = 400;
+		
+		this.right = false;
+		this.left = false;
+		this.up = false;
+		this.down = false;
+		
+		this.draw = function(ctx){
+			if(this.left && this.x > 15)
+				this.x -= 6;
+			if(this.right && this.x < 839)
+				this.x += 6;
+			if(this.up && this.y > 15)
+				this.y -= 6;
+			if(this.down && this.y < 465)
+				this.y += 6;
+			
+			ctx.fillStyle="blue";
+			ctx.beginPath();
+			ctx.arc(this.x, this.y, 15, 0, Math.PI*2, true);
+			ctx.closePath();
+			ctx.fill();	
+		}
+	}
+	
+	function Enemy(){
+		this.x = 427;
+		this.y = 240;
+		this.draw = function(ctx){
+			ctx.fillStyle="red";
+			ctx.beginPath();
+			ctx.arc(this.x, this.y, 15, 0, Math.PI*2, true);
+			ctx.closePath();
+			ctx.fill();	
+		}
+	}
+	
+	
+	function Bullet(x,y, angle){
+		this.x = x;
+		this.y = y;
+		this.dx = 4*Math.cos(angle);
+		this.dy = -4*Math.sin(angle);
+		this.draw = function(ctx){
+			this.x += this.dx;
+			this.y += this.dy;
+		
+			ctx.fillStyle = "black";
+			ctx.beginPath();
+			ctx.arc(this.x, this.y, 10, 0, Math.PI*2, true);
+			ctx.closePath();
+			ctx.fill();	
+		}
+	}
+	
+	function init(){
+		canvas = document.getElementById("canvas");
+		context = canvas.getContext("2d");
+		generateBullet();
+		interval = setInterval(run, 30);
+	}
+	
+	function run(){
+		context.clearRect(0,0,canvas.width, canvas.height);
+		player.draw(context);
+		enemy.draw(context);
+		drawBullet();
+	}
+
+	function generateBullet(){
+		var o =  -(player.y - enemy.y);
+		var a = (player.x - enemy.x);
+		var angle = Math.atan(o/a);
+		
+		if(a < 0)
+			 angle+=Math.PI;
+		
+		
+		bullet[bullet.length] = new Bullet(enemy.x, enemy.y, angle);
+	
+	
+		setTimeout(generateBullet, 400);
+	}
+
+	function drawBullet(){
+		for(i = 0; i < bullet.length; i++)
+			bullet[i].draw(context);
+	}
+
+	function keydown(evt){	
+		if(evt.keyCode == 37)
+			player.left = true;
+		if(evt.keyCode == 39)
+			player.right = true;
+		if(evt.keyCode == 38)
+			player.up = true;
+		if(evt.keyCode == 40)
+			player.down = true;
+	}
+
+	function keyup(evt){
+		if(evt.keyCode == 37)
+			player.left = false;
+		if(evt.keyCode == 39)
+			player.right = false;
+		if(evt.keyCode == 38)
+			player.up = false;
+		if(evt.keyCode == 40)
+			player.down = false;
+	}
+
+window.onkeydown = keydown;
+window.onkeyup = keyup;
+window.onload = init;
+</script>
+
+</head>
+
+<body>
+<canvas id="canvas" height = 480 width = 854></canvas>
+</body>
+</html>

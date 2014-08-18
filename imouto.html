@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Imouto</title>
+<style>
+	#canvas{
+		border:1px solid;
+	}
+</style>
+
+<script type="text/javascript">
+	var canvas, context, interval;
+	var player = new Imouto();
+	
+	function init(){
+		canvas = document.getElementById("canvas");
+		context = canvas.getContext("2d");
+		interval = setInterval(run, 75);
+	}
+	
+	function run(){
+		context.clearRect(0,0,canvas.width, canvas.height);
+		player.draw(context);
+	}
+	
+	function Imouto(){
+		this.x = 402.5;
+		this.y = 200;
+	
+		this.face = 0;
+		this.cell = 0;
+		this.moving = false;
+	
+		this.right = false;
+		this.left = false;
+		this.up = false;
+		this.down = false;
+		
+		this.image = new Image();
+		this.image.src = "imouto.png";
+		
+		this.draw = function(ctx){
+			if(this.moving){
+				this.cell++;
+				
+				if(this.cell > 7)
+					this.cell = 0;	
+			}
+			else
+				this.cell = this.cell%2*4;
+			
+			
+			if(this.left && this.x > 0)
+				this.x -= 7;
+			if(this.right && this.x < 805)
+				this.x += 7;
+			if(this.up && this.y > 0)
+				this.y -= 7;
+			if(this.down && this.y < 400)
+				this.y += 7;
+			
+			
+			ctx.drawImage(this.image, this.cell*48 ,this.face*80,49,80, this.x, this.y, 49, 80);
+		}
+	}
+
+	function keydown(evt){
+		if(evt.keyCode == 37){
+			player.face = 1;
+			player.moving = true;
+			
+			player.left = true;
+			player.right = false;
+			player.up = false;
+			player.down = false;
+		}
+		if(evt.keyCode == 39){
+			player.face = 2;
+			player.moving = true;
+			
+			player.left = false;
+			player.right = true;
+			player.up = false;
+			player.down = false;
+		}
+		
+		if(evt.keyCode == 38){
+			player.face = 3;
+			player.moving = true;
+			
+			player.left = false;
+			player.right = false;
+			player.up = true;
+			player.down = false;
+		}
+		if(evt.keyCode == 40){
+			player.face = 0;
+			player.moving = true;
+			
+			player.left = false;
+			player.right = false;
+			player.up = false;
+			player.down = true;
+		}
+	}
+
+	
+	function keyup(evt){
+		if(evt.keyCode == 37)
+			player.left = false;
+		if(evt.keyCode == 39)
+			player.right = false;
+		if(evt.keyCode == 38)
+			player.up = false;
+		if(evt.keyCode == 40)
+			player.down = false;
+		
+		if(!player.right && !player.left && !player.up && !player.down)
+			player.moving = false;
+	}
+
+
+window.onkeydown = keydown;
+window.onkeyup = keyup;
+window.onload = init;
+</script>
+</head>
+
+<body>
+<canvas id="canvas" width = 854 height = 480></canvas>
+</body>
+</html>

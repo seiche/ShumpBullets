@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=shift_jis" />
+
+<title>Radial</title>
+
+<style>
+
+	#canvas{
+
+		border:1px solid;
+
+	}
+
+</style>
+
+
+
+<script type="text/javascript">
+
+	var canvas, context, interval;
+
+	var bullet = new Array();
+
+	
+
+	function init(){
+
+		canvas = document.getElementById("canvas");
+
+		context = canvas.getContext("2d");
+
+		
+
+		generateBullets();
+
+	
+
+		interval = setInterval(run, 30);
+
+	}
+
+	
+
+	function run(){
+
+		context.clearRect(0,0, canvas.width, canvas.height);
+
+		drawEnemy();
+
+		drawBullets();
+
+	}
+
+	
+
+	function generateBullets(){		
+	for(angle = 0; angle < 360; angle += 30)
+		bullet[bullet.length] = new Bullet(canvas.width/2, canvas.height/2, angle);
+
+		setTimeout(generateBullets, 250);
+	}
+
+	
+
+	function drawBullets(){
+
+		for(i = 0; i < bullet.length; i++)
+
+			bullet[i].draw(context);
+
+	
+
+	}
+
+	
+
+	
+
+	function drawEnemy(){
+
+		context.fillStyle = "red";
+
+		context.beginPath();
+
+		context.arc(canvas.width/2, canvas.height/2, 15, 0, Math.PI*2, true);
+
+		context.closePath();
+
+		context.fill();
+
+	}
+
+	
+
+	function Bullet(x, y, angle){
+
+		this.x = x;
+
+		this.y = y;
+
+		this.angle = Math.PI*angle/180;
+
+		this.dx = 4*Math.cos(this.angle);
+
+		this.dy =-4*Math.sin(this.angle);
+
+	
+
+		this.draw = function(ctx){
+
+			this.x += this.dx;
+
+			this.y += this.dy;
+
+			
+
+			
+
+			ctx.fillStyle = "purple";
+
+			ctx.beginPath();
+
+			ctx.arc(this.x, this.y, 10, 0, Math.PI*2, true);
+
+			ctx.closePath();
+
+			ctx.fill();
+
+		}
+
+	}
+
+	
+
+	
+
+window.onload = init;
+
+</script>
+
+
+
+</head>
+
+
+
+<body>
+
+<canvas id = "canvas" height = 480 width = 854></canvas>
+
+</body>
+
+</html>
+
